@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "124602061869",
+    "firebase_url": "https://flutter-c3afe.firebaseio.com",
+    "project_id": "flutter-c3afe",
+    "storage_bucket": "flutter-c3afe.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:124602061869:android:d147d5d21e565db83c54a4",
+        "android_client_info": {
+          "package_name": "com.example.firebaseimageupload"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "124602061869-dknqdmtuggqqc3h5l7ujrji04na2967p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAOx9AHM1zOuK6-mVjSqiArWHDLX9zCkY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "124602061869-dknqdmtuggqqc3h5l7ujrji04na2967p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
