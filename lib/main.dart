@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker_modern/image_picker_modern.dart';
 import 'dart:io';
+import 'package:path/path.dart' as Path;
 
 void main() => runApp(MyApp());
 
@@ -48,14 +50,32 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   File _image;
-
-  Future getImage() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-
-    setState(() {
-      _image = image;
+  String _uploadedFileURL;
+  bool isLoading = false;
+  Future chooseFile() async {
+    await ImagePicker.pickImage(source: ImageSource.gallery).then((image) {
+      setState(() {
+        _image = image;
+      });
     });
-    print("image is Selected");
+  }
+
+  Future uploadFile() async {
+    setState(() {
+      isLoading = true;
+    });
+    StorageReference storageReference = FirebaseStorage.instance
+        .ref()
+        .child('images/${Path.basename(_image.path)}}');
+    StorageUploadTask uploadTask = storageReference.putFile(_image);
+    await uploadTask.onComplete;
+    print('File Uploaded');
+    storageReference.getDownloadURL().then((fileURL) {
+      setState(() {
+        _uploadedFileURL = fileURL;
+        isLoading = false;
+      });
+    });
   }
 
   void _incrementCounter() {
@@ -73,13 +93,73 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Image Picker Example'),
+        title: Text('Firestore File Upload'),
       ),
       body: Center(
-        child: _image == null ? Text('No image selected.') : Image.file(_image),
+        child: Column(
+          children: <Widget>[
+            Container(
+              child: Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        Text('Selected Image'),
+                        _image != null
+                            ? Image.file(
+                                _image,
+                                // height: 150,
+                                height: 150,
+                                width: 150,
+                              )
+                            : Container(
+                                child: Center(
+                                  child: Text(
+                                    "No Image is Selected",
+                                  ),
+                                ),
+                                height: 150,
+                              ),
+                      ],
+                    ),
+                    Column(
+                      children: <Widget>[
+                        Text('Uploaded Image'),
+                        _uploadedFileURL != null
+                            ? Image.network(
+                                _uploadedFileURL,
+                                height: 150,
+                                width: 150,
+                              )
+                            : Container(
+                                child: Center(
+                                  child: Text(
+                                    "No Image is Selected",
+                                  ),
+                                ),
+                                height: 150,
+                              ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+            _image != null
+                ? isLoading
+                    ? CircularProgressIndicator()
+                    : RaisedButton(
+                        child: Text('Upload Image'),
+                        onPressed: uploadFile,
+                        color: Colors.red,
+                      )
+                : Container()
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: getImage,
+        onPressed: chooseFile,
         tooltip: 'Pick Image',
         child: Icon(Icons.add_a_photo),
       ),
